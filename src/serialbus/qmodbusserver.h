@@ -62,7 +62,7 @@ protected:
     virtual bool writeData(const QModbusDataUnit &unit);
     virtual bool readData(QModbusDataUnit *newData) const;
 
-    virtual QModbusResponse processRequest(const QModbusPdu &request);
+    virtual QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0);
     virtual QModbusResponse processPrivateRequest(const QModbusPdu &request);
 };
 

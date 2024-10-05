@@ -563,7 +563,7 @@ bool QModbusServer::readData(QModbusDataUnit *newData) const
 
     \sa processPrivateRequest()
 */
-QModbusResponse QModbusServer::processRequest(const QModbusPdu &request)
+QModbusResponse QModbusServer::processRequest(const QModbusPdu &request, quint16 port)
 {
     return d_func()->processRequest(request);
 }

@@ -8,17 +8,17 @@
 qt_internal_add_module(SerialBus
     PLUGIN_TYPES canbus
     SOURCES
-        qcanbus.cpp qcanbus.h
-        qcanbusdevice.cpp qcanbusdevice.h qcanbusdevice_p.h
-        qcanbusdeviceinfo.cpp qcanbusdeviceinfo.h qcanbusdeviceinfo_p.h
-        qcanbusfactory.cpp qcanbusfactory.h
-        qcanbusframe.cpp qcanbusframe.h
-        qcancommondefinitions.cpp qcancommondefinitions.h
-        qcandbcfileparser.cpp qcandbcfileparser.h qcandbcfileparser_p.h
-        qcanframeprocessor.cpp qcanframeprocessor.h qcanframeprocessor_p.h
-        qcanmessagedescription.cpp qcanmessagedescription.h qcanmessagedescription_p.h
-        qcansignaldescription.cpp qcansignaldescription.h qcansignaldescription_p.h
-        qcanuniqueiddescription.cpp qcanuniqueiddescription.h qcanuniqueiddescription_p.h
+        # qcanbus.cpp qcanbus.h
+        # qcanbusdevice.cpp qcanbusdevice.h qcanbusdevice_p.h
+        # qcanbusdeviceinfo.cpp qcanbusdeviceinfo.h qcanbusdeviceinfo_p.h
+        # qcanbusfactory.cpp qcanbusfactory.h
+        # qcanbusframe.cpp qcanbusframe.h
+        # qcancommondefinitions.cpp qcancommondefinitions.h
+        # qcandbcfileparser.cpp qcandbcfileparser.h qcandbcfileparser_p.h
+        # qcanframeprocessor.cpp qcanframeprocessor.h qcanframeprocessor_p.h
+        # qcanmessagedescription.cpp qcanmessagedescription.h qcanmessagedescription_p.h
+        # qcansignaldescription.cpp qcansignaldescription.h qcansignaldescription_p.h
+        # qcanuniqueiddescription.cpp qcanuniqueiddescription.h qcanuniqueiddescription_p.h
         qmodbus_symbols_p.h
         qmodbusadu_p.h
         qmodbusclient.cpp qmodbusclient.h qmodbusclient_p.h

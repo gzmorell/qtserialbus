@@ -2,5 +2,5 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 add_subdirectory(serialbus)
-add_subdirectory(plugins)
-add_subdirectory(tools)
+# add_subdirectory(plugins)
+# add_subdirectory(tools)
