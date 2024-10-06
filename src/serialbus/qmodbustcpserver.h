@@ -40,7 +40,7 @@ protected:
     bool open() override;
     void close() override;
 
-    QModbusResponse processRequest(const QModbusPdu &request) override;
+    QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0) override;
 };
 
 QT_END_NAMESPACE

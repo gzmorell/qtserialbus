@@ -42,7 +42,7 @@ public:
         This function is a workaround since 2nd level lambda below cannot
         call protected QModbusTcpServer::processRequest(..) function on VS2013.
     */
-    QModbusResponse forwardProcessRequest(const QModbusRequest &r)
+    QModbusResponse forwardProcessRequest(const QModbusRequest &r, quint16 port = 0)
     {
         Q_Q(QModbusTcpServer);
         if (q->value(QModbusServer::DeviceBusy).value<quint16>() == 0xffff) {
@@ -51,7 +51,7 @@ public:
             return QModbusExceptionResponse(r.functionCode(),
                 QModbusExceptionResponse::ServerDeviceBusy);
         }
-        return q->processRequest(r);
+        return q->processRequest(r, port);
     }
 
     /*
@@ -70,14 +70,16 @@ public:
     */
     bool matchingServerAddress(quint8 unitId) const
     {
-        Q_Q(const QModbusTcpServer);
-        if (q->serverAddress() == unitId)
-            return true;
+        // Q_Q(const QModbusTcpServer);
+        // if (q->serverAddress() == unitId)
+        //     return true;
 
-        // No, not our address! Ignore!
-        qCDebug(QT_MODBUS) << "(TCP server) Wrong server unit identifier address, expected"
-            << q->serverAddress() << "got" << unitId;
-        return false;
+        // // No, not our address! Ignore!
+        // qCDebug(QT_MODBUS) << "(TCP server) Wrong server unit identifier address, expected"
+        //     << q->serverAddress() << "got" << unitId;
+        // return false;
+        Q_UNUSED(unitId);
+        return true;
     }
 
     void setupTcpServer()
@@ -151,8 +153,9 @@ public:
                     if (!matchingServerAddress(unitId))
                         continue;
 
-                    qCDebug(QT_MODBUS) << "(TCP server) Request PDU:" << request;
-                    const QModbusResponse response = forwardProcessRequest(request);
+                    auto localSocketPort = socket->localPort();
+                    qCDebug(QT_MODBUS) << "(TCP server) Request PDU from local port " << localSocketPort << " : " << request;
+                    const QModbusResponse response = forwardProcessRequest(request, localSocketPort);
                     qCDebug(QT_MODBUS) << "(TCP server) Response PDU:" << response;
 
                     QByteArray result;

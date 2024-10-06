@@ -144,8 +144,9 @@ void QModbusRtuSerialServer::close()
     A request to the RTU serial server will be answered with a Modbus exception
     response with the exception code QModbusExceptionResponse::IllegalFunction.
 */
-QModbusResponse QModbusRtuSerialServer::processRequest(const QModbusPdu &request)
+QModbusResponse QModbusRtuSerialServer::processRequest(const QModbusPdu &request, quint16 port)
 {
+    Q_UNUSED(port);
     if (request.functionCode() == QModbusRequest::EncapsulatedInterfaceTransport) {
         quint8 meiType;
         request.decodeData(&meiType);
