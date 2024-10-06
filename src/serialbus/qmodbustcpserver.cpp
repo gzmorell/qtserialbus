@@ -124,7 +124,7 @@ void QModbusTcpServer::close()
     A request to the TCP server will be answered with a Modbus exception
     response with the exception code QModbusExceptionResponse::IllegalFunction.
 */
-QModbusResponse QModbusTcpServer::processRequest(const QModbusPdu &request)
+QModbusResponse QModbusTcpServer::processRequest(const QModbusPdu &request, quint16 port)
 {
     switch (request.functionCode()) {
     case QModbusRequest::ReadExceptionStatus:
