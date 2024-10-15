@@ -5,6 +5,7 @@
 #include "qmodbustcpserver_p.h"
 
 #include <QtCore/qurl.h>
+#include <qtpreprocessorsupport.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -126,6 +127,7 @@ void QModbusTcpServer::close()
 */
 QModbusResponse QModbusTcpServer::processRequest(const QModbusPdu &request, quint16 port)
 {
+    Q_UNUSED(port);
     switch (request.functionCode()) {
     case QModbusRequest::ReadExceptionStatus:
     case QModbusRequest::Diagnostics:
