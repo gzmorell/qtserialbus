@@ -150,7 +150,7 @@ public:
 
                     buffer->remove(0, current);
 
-                    if (!matchingServergAddress(unitId))
+                    if (!matchingServerAddress(unitId))
                         continue;
 
                     auto remoteSocketPort = socket->peerPort();
@@ -167,15 +167,15 @@ public:
 
                     if (!socket->isOpen()) {
                         qCDebug(QT_MODBUS) << "(TCP server) Requesting socket has closed.";
-                        forwardError(QModbusTcpServer::tr("Requesting socket is closed"),
+                        forwardError(QModbusTcpServer::tr("Requesting socket is  closed"),
                                      QModbusDevice::WriteError);
                         return;
                     }
 
                     qint64 writtenBytes = socket->write(result);
                     if (writtenBytes == -1 || writtenBytes < result.size()) {
-                        qCDebug(QT_MODBUS) << "(TCP server) Cannot write requested " "response to socket.";
-                        forwardError(QModbusTcpServer::tr( "Could not write response to client"),
+                        qCDebug(QT_MODBUS) << "(TCP server) Cannot write requested response to socket.";
+                        forwardError(QModbusTcpServer::tr("Could not write response to client"),
                                      QModbusDevice::WriteError);
                     }
                 }
@@ -191,7 +191,7 @@ public:
         });
     }
 
-    QTcpServer *m_tcpServer{nullptr};
+    QTcpServer *m_tcpServer { nullptr };
 
     std::unique_ptr<QModbusTcpConnectionObserver> m_observer;
 
