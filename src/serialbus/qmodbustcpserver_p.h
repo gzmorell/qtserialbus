@@ -118,11 +118,11 @@ public:
 
                 buffer->append(socket->readAll());
                 while (!buffer->isEmpty()) {
-                    qCDebug(QT_MODBUS_LOW).noquote() << "(TCP server) Read buffer: 0x" 
+                    qCDebug(QT_MODBUS_LOW).noquote() << "(TCP server) Read buffer: 0x"
                         + buffer->toHex();
 
                     if (buffer->size() < mbpaHeaderSize) {
-                        qCDebug(QT_MODBUS) << "(TCP server) MBPA header too short.Waiting for more data.";
+                        qCDebug(QT_MODBUS) << "(TCP server) MBPA header too short. Waiting for more data.";
                         return;
                     }
 
@@ -167,7 +167,7 @@ public:
 
                     if (!socket->isOpen()) {
                         qCDebug(QT_MODBUS) << "(TCP server) Requesting socket has closed.";
-                        forwardError(QModbusTcpServer::tr("Requesting socket is  closed"),
+                        forwardError(QModbusTcpServer::tr("Requesting socket is closed"),
                                      QModbusDevice::WriteError);
                         return;
                     }
