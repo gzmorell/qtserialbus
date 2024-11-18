@@ -35,7 +35,7 @@ protected:
     bool open() override;
     void close() override;
 
-    QModbusResponse processRequest(const QModbusPdu &request) override;
+    QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0) override;
 };
 
 #if QT_DEPRECATED_SINCE(6, 2)
