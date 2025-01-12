@@ -1,0 +1,154 @@
+diff --git a/src/serialbus/qmodbusrtuserialserver.cpp b/src/serialbus/qmodbusrtuserialserver.cpp
+index fa93e063..02553ed8 100644
+--- a/src/serialbus/qmodbusrtuserialserver.cpp
++++ b/src/serialbus/qmodbusrtuserialserver.cpp
+@@ -144,8 +144,9 @@ void QModbusRtuSerialServer::close()
+     A request to the RTU serial server will be answered with a Modbus exception
+     response with the exception code QModbusExceptionResponse::IllegalFunction.
+ */
+-QModbusResponse QModbusRtuSerialServer::processRequest(const QModbusPdu &request)
++QModbusResponse QModbusRtuSerialServer::processRequest(const QModbusPdu &request, quint16 port)
+ {
++    Q_UNUSED(port);
+     if (request.functionCode() == QModbusRequest::EncapsulatedInterfaceTransport) {
+         quint8 meiType;
+         request.decodeData(&meiType);
+diff --git a/src/serialbus/qmodbusrtuserialserver.h b/src/serialbus/qmodbusrtuserialserver.h
+index 4d430eba..6a38b315 100644
+--- a/src/serialbus/qmodbusrtuserialserver.h
++++ b/src/serialbus/qmodbusrtuserialserver.h
+@@ -35,7 +35,7 @@ protected:
+     bool open() override;
+     void close() override;
+ 
+-    QModbusResponse processRequest(const QModbusPdu &request) override;
++    QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0) override;
+ };
+ 
+ #if QT_DEPRECATED_SINCE(6, 2)
+diff --git a/src/serialbus/qmodbusserver.cpp b/src/serialbus/qmodbusserver.cpp
+index 70be4156..66b63128 100644
+--- a/src/serialbus/qmodbusserver.cpp
++++ b/src/serialbus/qmodbusserver.cpp
+@@ -563,8 +563,9 @@ bool QModbusServer::readData(QModbusDataUnit *newData) const
+ 
+     \sa processPrivateRequest()
+ */
+-QModbusResponse QModbusServer::processRequest(const QModbusPdu &request)
++QModbusResponse QModbusServer::processRequest(const QModbusPdu &request, quint16 port)
+ {
++    Q_UNUSED(port);
+     return d_func()->processRequest(request);
+ }
+ 
+diff --git a/src/serialbus/qmodbusserver.h b/src/serialbus/qmodbusserver.h
+index 57f422a3..0617e620 100644
+--- a/src/serialbus/qmodbusserver.h
++++ b/src/serialbus/qmodbusserver.h
+@@ -62,7 +62,7 @@ protected:
+     virtual bool writeData(const QModbusDataUnit &unit);
+     virtual bool readData(QModbusDataUnit *newData) const;
+ 
+-    virtual QModbusResponse processRequest(const QModbusPdu &request);
++    virtual QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0);
+     virtual QModbusResponse processPrivateRequest(const QModbusPdu &request);
+ };
+ 
+diff --git a/src/serialbus/qmodbustcpserver.cpp b/src/serialbus/qmodbustcpserver.cpp
+index ad7e2e58..ceaa947e 100644
+--- a/src/serialbus/qmodbustcpserver.cpp
++++ b/src/serialbus/qmodbustcpserver.cpp
+@@ -5,6 +5,7 @@
+ #include "qmodbustcpserver_p.h"
+ 
+ #include <QtCore/qurl.h>
++#include <qtpreprocessorsupport.h>
+ 
+ QT_BEGIN_NAMESPACE
+ 
+@@ -124,8 +125,9 @@ void QModbusTcpServer::close()
+     A request to the TCP server will be answered with a Modbus exception
+     response with the exception code QModbusExceptionResponse::IllegalFunction.
+ */
+-QModbusResponse QModbusTcpServer::processRequest(const QModbusPdu &request)
++QModbusResponse QModbusTcpServer::processRequest(const QModbusPdu &request, quint16 port)
+ {
++    Q_UNUSED(port);
+     switch (request.functionCode()) {
+     case QModbusRequest::ReadExceptionStatus:
+     case QModbusRequest::Diagnostics:
+diff --git a/src/serialbus/qmodbustcpserver.h b/src/serialbus/qmodbustcpserver.h
+index 1f0e692b..e2b0eaab 100644
+--- a/src/serialbus/qmodbustcpserver.h
++++ b/src/serialbus/qmodbustcpserver.h
+@@ -40,7 +40,7 @@ protected:
+     bool open() override;
+     void close() override;
+ 
+-    QModbusResponse processRequest(const QModbusPdu &request) override;
++    QModbusResponse processRequest(const QModbusPdu &request, quint16 port = 0) override;
+ };
+ 
+ QT_END_NAMESPACE
+diff --git a/src/serialbus/qmodbustcpserver_p.h b/src/serialbus/qmodbustcpserver_p.h
+index f7c392f7..a2dcc4c0 100644
+--- a/src/serialbus/qmodbustcpserver_p.h
++++ b/src/serialbus/qmodbustcpserver_p.h
+@@ -42,7 +42,7 @@ public:
+         This function is a workaround since 2nd level lambda below cannot
+         call protected QModbusTcpServer::processRequest(..) function on VS2013.
+     */
+-    QModbusResponse forwardProcessRequest(const QModbusRequest &r)
++    QModbusResponse forwardProcessRequest(const QModbusRequest &r, quint16 port = 0)
+     {
+         Q_Q(QModbusTcpServer);
+         if (q->value(QModbusServer::DeviceBusy).value<quint16>() == 0xffff) {
+@@ -51,7 +51,7 @@ public:
+             return QModbusExceptionResponse(r.functionCode(),
+                 QModbusExceptionResponse::ServerDeviceBusy);
+         }
+-        return q->processRequest(r);
++        return q->processRequest(r, port);
+     }
+ 
+     /*
+@@ -70,14 +70,16 @@ public:
+     */
+     bool matchingServerAddress(quint8 unitId) const
+     {
+-        Q_Q(const QModbusTcpServer);
+-        if (q->serverAddress() == unitId)
+-            return true;
++        // Q_Q(const QModbusTcpServer);
++        // if (q->serverAddress() == unitId)
++        //     return true;
+ 
+         // No, not our address! Ignore!
+-        qCDebug(QT_MODBUS) << "(TCP server) Wrong server unit identifier address, expected"
+-            << q->serverAddress() << "got" << unitId;
+-        return false;
++        // qCDebug(QT_MODBUS) << "(TCP server) Wrong server unit identifier address, expected"
++        //     << q->serverAddress() << "got" << unitId;
++        // return false;
++        Q_UNUSED(unitId);
++        return true;
+     }
+ 
+     void setupTcpServer()
+@@ -151,8 +153,9 @@ public:
+                     if (!matchingServerAddress(unitId))
+                         continue;
+ 
+-                    qCDebug(QT_MODBUS) << "(TCP server) Request PDU:" << request;
+-                    const QModbusResponse response = forwardProcessRequest(request);
++                    auto remoteSocketPort = socket->peerPort();
++                    qCDebug(QT_MODBUS) << "(TCP server) Request PDU from local port " << remoteSocketPort << " : " << request;
++                    const QModbusResponse response = forwardProcessRequest(request, remoteSocketPort);
+                     qCDebug(QT_MODBUS) << "(TCP server) Response PDU:" << response;
+ 
+                     QByteArray result;
+@@ -199,4 +202,3 @@ public:
+ QT_END_NAMESPACE
+ 
+ #endif // QMODBUSTCPSERVER_P_H
+-
